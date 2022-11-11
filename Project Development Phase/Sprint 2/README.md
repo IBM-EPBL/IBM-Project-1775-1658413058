@@ -10,4 +10,5 @@ In this sprint the following functionality are made:
 
 
 ## Backend Developer
-    - [*Dhinagaran-S*](http://github.com/dhinagaran-s/)
+- [*Dhinagaran-S*](http://github.com/dhinagaran-s/)
+
