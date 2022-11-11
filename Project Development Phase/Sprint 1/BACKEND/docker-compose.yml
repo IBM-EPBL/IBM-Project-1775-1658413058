@@ -1,0 +1,13 @@
+version: '3.7'
+
+services:
+    web:
+        build: .
+        volumes:
+            - '/django'
+        ports:
+            - 8000:8000
+        image: nutra-image
+        container_name: nutra-container
+        command: python manage.py runserver 0.0.0.0:8000
+        
