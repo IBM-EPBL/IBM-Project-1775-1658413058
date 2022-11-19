@@ -1,0 +1,37 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root{
+  --prim-color: #202124;
+  --secon-color: #303134;
+  --orange: #EC4F1E;
+  --light-shade: #B3B7BC;
+  --light: #E2E2E2;
+}
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  flex: 0 0 auto;
+}
+
+html,
+body {
+  width: 100vw;
+  min-height: 100%;
+  scroll-behavior: smooth;
+  background-color: var(--prim-color);
+  overflow-y: scroll;
+}
+
+.cont{
+	padding-inline: 1.5rem;
+}
+
+@media only screen and (min-width: 768px){
+	.cont{
+		padding-inline: 15%;
+	}
+}

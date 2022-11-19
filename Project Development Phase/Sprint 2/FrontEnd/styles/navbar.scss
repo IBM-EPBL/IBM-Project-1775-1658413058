@@ -1,0 +1,15 @@
+nav{
+
+    .links{
+
+        a{
+            color: var(--light-shade);
+            padding: 0.5rem;
+
+
+            &:hover, &:active {
+                color: var(--light);
+            }
+        }
+    }
+}
