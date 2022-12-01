@@ -105,12 +105,11 @@ export default function signup() {
           <input type="password" name='confPassword' value={state.confPassword} onChange={handleChange} required/>
           <span>Confirm password</span>
           {(validError.confPassword && <p className='error'>{validError.confPassword}</p>) || <p className='error'>{valueError.confPassword}</p>}
+          {error && <p className='error'>{error}</p>}
         </div>
         
       </div>
       <button className={`${isLoading?"pointer-events-none bg-secon":"cursor-pointer bg-main"} px-8 py-2 self-center  hover:scale-[1.05] text-light active:scale-[0.9] rounded-full`} type='submit' onClick={handleSubmit}>SIGNUP</button>
-      {error && <span className='error'>{error}</span>}
-      
     </div>
   )
 }

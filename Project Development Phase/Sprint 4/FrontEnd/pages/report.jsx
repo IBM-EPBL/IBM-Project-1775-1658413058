@@ -2,16 +2,51 @@
 
 import { useAuthContext } from "../src/hooks/useAuthContext"
 import {useState} from "react"
+import axios from 'axios'
 
 export default function report() {
+  const { user } = useAuthContext()
+  const [message, setMessage] = useState("");
   const [isReport, setIsReport] = useState(false);
   const [name, setName] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  const handleClick = ()=>{
-    setIsReport(true)
+  const report = async () => {
+    setIsLoading(true);
+    setError(null);
+
+    await axios.post('http://192.168.61.33:8000/api/report',{
+        message: message
+    })
+    .then((res) => {
+        console.log(res.data);
+        setIsLoading(false);
+    })
+    .catch((err) => {
+        if(err.response){
+            setError(err.response.data.error);
+        }else if(err.request){
+            console.log(err.request);
+        }else{
+            console.log("Error: ", err.message);
+        }
+        console.log(err.config);
+        setIsLoading(false)
+    })
+}
+
+  const handleChange = (e) => {
+    let { value } = e.target;
+    if(!value) return;
+    setMessage(value);
   }
 
-  const { user } = useAuthContext();
+  const handleClick = ()=>{
+    setIsReport(true);
+    report();
+  }
+
   return(
     <div className="p-[2rem] w-full cont sm:px-[30%] max-h-[100vh] flex flex-col justify-center items-start">
         <h1 className='w-full px-4 text-main text-[2rem]'>Report Issue</h1>
@@ -25,7 +60,7 @@ export default function report() {
             </div>
             <span className="px-4 text-light">Mention Issue</span>
             <div className="input_box">
-              <textarea className="w-full text-light-Shade outline-none border-none p-[1.5rem] bg-secon rounded-[1rem]" cols="30" rows="5" placeholder="Enter your issues"></textarea>
+              <textarea className="w-full text-light-Shade outline-none border-none p-[1.5rem] bg-secon rounded-[1rem]" cols="30" rows="5" onChange={handleChange} value={message || ''} placeholder="Enter your issues"></textarea>
               {isReport && <p className="text-green-500">Report sent successfully</p>}
             </div>
             

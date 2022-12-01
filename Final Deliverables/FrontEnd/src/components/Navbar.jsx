@@ -15,7 +15,7 @@ export default function Navbar(){
                 <Link href="#about">About</Link>
                 <Link href="/report">Report</Link>
                 {!user && <Link href="/signin">Signin</Link>}
-                {user && <button className="py-[0.2rem] text-main px-[1rem] border rounded-full border-main" onClick={() => {dispatch({type: 'SIGNOUT'})}}>Log out</button>}
+                {user && <button className="py-[0.2rem] text-main px-[1rem] border rounded-full border-main" onClick={() => {dispatch({type: 'SIGNOUT'});localStorage.removeItem('user')}}>Log out</button>}
             </div>
         </nav>
     )

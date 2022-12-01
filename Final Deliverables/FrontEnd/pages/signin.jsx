@@ -4,6 +4,7 @@ import Link from "next/link";
 import {useState, useEffect} from 'react'
 import { useAuthContext } from "../src/hooks/useAuthContext";
 import { useRouter } from "next/router";
+import axios from "axios";
 
 export default function signin(){
     const router = useRouter();
@@ -12,6 +13,7 @@ export default function signin(){
         password: ""
     })
     const [isSignin, setIsSignin] = useState(false)
+    const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState(null);
     const { dispatch } = useAuthContext();
 
@@ -22,43 +24,46 @@ export default function signin(){
         })
     }
 
-    // const signIn = async () =>{
-    //     setIsLoading(true);
-    //     setError(null);
+    const signIn = async () =>{
+        setIsLoading(true);
+        setError(null);
 
-    //     await axios.post('http://159.122.174.40:30085/api/register-api-user/',{
-    //         username: userName,
-    //         password: password
-    //     })
-    //     .then((res) => {
-    //         dispatch({type: 'SIGNIN', payload: res.data});
-    //         setIsLoading(false);
-    //     })
-    //     .catch((err) => {
-    //         if(err.response){
-    //             setError(err.response.data.error);
-    //         }else if(err.request){
-    //             console.log(err.request);
-    //         }else{
-    //             console.log("Error: ", err.message);
-    //         }
-    //         console.log(err.config);
-    //     })
-    // }
+        await axios.post('http://192.168.61.33:8000/api/user-login',{
+            LoginID: state.userName,
+            password: state.password
+        })
+        .then((res) => {
+            console.log(res.data.data);
+            localStorage.setItem("user", JSON.stringify(res.data.data));
+            dispatch({type: 'SIGNIN', payload: res.data.data});
+            setIsLoading(false);
+            redir();
+        })
+        .catch((err) => {
+            if(err.response){
+                setError(err.response.data.error);
+            }else if(err.request){
+                console.log(err.request);
+            }else{
+                console.log("Error: ", err.message);
+            }
+            console.log(err.config);
+            setIsLoading(false)
+        })
+    }
 
     const redir = () => {
-        router.push("/")
+        router.push("/");
     }
 
     const handleSubmit = () => {
-        dispatch({type: 'SIGNIN', payload: state})
-        setIsSignin(true)
+        setIsSignin(true);
     }
 
     useEffect(() => {
         if(isSignin){
-            setIsSignin(false)
-            redir();
+            signIn();
+            setIsSignin(false);
         }
     },[isSignin])
 
@@ -82,7 +87,6 @@ export default function signin(){
                 onChange={handleChange}
                 required/>
                 <span>Username</span>
-                <p className='error'>{null}</p>
                 </div>
                 
                 <div className="input_box">
@@ -90,11 +94,11 @@ export default function signin(){
                 onChange={handleChange}
                 required/>
                 <span>Password</span>
-                <p className='error'>{null}</p>
+                {error && <p className='error'>{error}</p>}
                 </div>
             </div>
-            <button className="px-8 py-2 self-center bg-main hover:scale-[1.05] text-light active:scale-[0.9] rounded-full" onClick={handleSubmit} type='submit'>SIGN IN</button>
-            {error && <span className='error'>{error}</span>}
+            
+            <button className={`${isLoading?"pointer-events-none bg-secon":"cursor-pointer bg-main"} px-8 py-2 self-center hover:scale-[1.05] text-light active:scale-[0.9] rounded-full`} onClick={handleSubmit} type='submit'>SIGN IN</button>
         </div>
     )
 }

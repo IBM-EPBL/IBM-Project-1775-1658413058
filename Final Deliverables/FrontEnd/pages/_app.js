@@ -4,8 +4,6 @@ import '../styles/globals.css'
 import '../styles/signup.scss'
 import '../styles/navbar.scss'
 
-
-
 function MyApp({ Component, pageProps }) {
 
   const Layout = Component.Layout || Default;

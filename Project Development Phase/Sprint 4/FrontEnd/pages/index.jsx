@@ -16,9 +16,12 @@ export default function Home() {
   const { user } = useAuthContext();
 
   const [imgUrl, setImgUrl] = useState("/bg.jpg")
+  const [image, setImage] = useState()
+
+  const [isLoading, setIsLoading] = useState(0);
 
   const [searchInp, setSearchInp] = useState("")
-  const {uploadImg, fruitName, setName} = useImageUpload();
+  const {uploadImg, fruitName, rmName} = useImageUpload();
   const [search, setSearch] = useState("");
   const [fruitId, setFruitId] = useState("");
   const [isSearch, setIsSearch] = useState(false);
@@ -27,9 +30,10 @@ export default function Home() {
   const [nutri, setNutri] = useState(null)
 
   const fetchNutriValue = async () => {
-    await axios.get(`http://159.122.174.40:30085/api/calorie-detail/${fruitId}`)
+    await axios.get(`http://159.122.174.40:31738/api/calorie-detail/${fruitId}`)
         .then((res) => {
             setNutri(res.data);
+            setIsLoading(0);
         })
         .catch((err) => {
             if(err.response){
@@ -42,14 +46,15 @@ export default function Home() {
                 console.log("Error: ", err.message);
             }
             console.log(err.config);
+            setIsLoading(0);
         })
   }
 
-  const searchId = async () => {
-    await axios.get(`http://159.122.174.40:30085/api/search-fruits/?ordering=-id&search=${search}`)
+  const searchId = async (s) => {
+    await axios.get(`http://159.122.174.40:31738/api/search-fruits/?ordering=-id&search=${s}`)
         .then((res) => {
-            setFruitId(res.data.results[0].id)
-            setIsSearch(true)
+            setFruitId(res.data.results[0].id);
+            setIsSearch(true);
         })
         .catch((err) => {
             if(err.response){
@@ -66,23 +71,31 @@ export default function Home() {
   }
 
   const handleSearch = () => {
-    searchId();
+    searchId(searchInp);
+    setIsLoading(1);
   }
 
   const closeModal = () => {
     setIsOpen(false)
+    setSearch("")
   }
 
   const handleClick = () => {
-    // uploadImg(imgFile.current.files[0]);
-    setSearch("APPLE")
-    setIsSearchImg(true)
+    uploadImg(image);
+    setIsLoading(2);
   }
 
   useEffect(()=>{
+    if(fruitName){
+      setSearch(fruitName);
+      setIsSearchImg(true);
+      rmName();
+    }
+  },[fruitName])
+
+  useEffect(()=>{
     if(isSearchImg){
-      searchId()
-      setIsSearchImg(false)
+      searchId(search);
     }
   },[isSearchImg])
 
@@ -90,6 +103,7 @@ export default function Home() {
     if(isSearch){
       fetchNutriValue()
       setIsSearch(false)
+      setIsSearchImg(false)
     }
   },[isSearch])
 
@@ -99,15 +113,12 @@ export default function Home() {
     }
   },[nutri]);
 
-  useEffect(()=>{
-    setName("")
-  },[fruitName]);
-
   const handleImg = () => {
     const iFile = imgFile.current.files[0]
     if(iFile){
       setImgUrl(URL.createObjectURL(iFile))
     }
+    setImage(iFile)
   }
 
   return (
@@ -125,12 +136,12 @@ export default function Home() {
         className='rounded-[5rem] px-[1rem] py-[0.6rem] outline-none bg-secon text-light-Shade flex-1' 
         type="text" 
         value={searchInp}
-        onChange={e => {setSearch(e.target.value); setSearchInp(e.target.value)}}
+        onChange={e => {setSearchInp(e.target.value)}}
         placeholder='Enter fruit name' 
         />
 
         <button 
-        className='rounded-[5rem] bg-main py-[0.6rem] text-light px-[1.5rem] active:scale-90'
+        className={`${isLoading==1?"bg-secon pointer-events-none":"bg-main cursor-pointer"} text-light px-[1.5rem] rounded-full py-[0.6rem] active:scale-90`}
         onClick={handleSearch}
         >search</button>
       </div>
@@ -167,7 +178,7 @@ export default function Home() {
                     as="h3"
                     className="py-2 text-2xl font-medium leading-6 capitalize text-light"
                   >
-                    {search}
+                    {search?search:searchInp}
                   </Dialog.Title>
                   <div className="py-4">
                     <p className="text-light-Shade text-lg text-secon">
@@ -216,9 +227,9 @@ export default function Home() {
           <div className="w-full h-full flex  items-center flex-col sm:flex-row justify-evenly ">
             <Image src={imgUrl} width="320" height="320" alt='image'/>
             <div className="flex pt-4 flex-row sm:flex-col gap-[1rem]">
-              <label className='bg-prim text-light-Shade px-[1.5rem] rounded-full py-[0.6rem]' htmlFor="img">Select Image</label>
+              <label className='bg-prim text-light px-[1.5rem] rounded-full py-[0.6rem] active:scale-90' htmlFor="img">Select Image</label>
               <input className='hidden' id='img' type="file" onChange={handleImg} ref={imgFile}/>
-              <button className='bg-prim text-light-Shade px-[1.5rem] rounded-full py-[0.6rem] grow-0' type="submit" onClick={handleClick}>Upload</button>
+              <button className={`${isLoading==2?"bg-prim pointer-events-none":"bg-main cursor-pointer"} text-light px-[1.5rem] rounded-full py-[0.6rem] active:scale-90`} type="submit" onClick={handleClick}>Upload</button>
             </div>
           </div>
         </div>

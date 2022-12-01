@@ -15,7 +15,7 @@ export default function Hero () {
 
             {user && 
                 <>
-                    <h1 className="text-light pb-6 text-3xl">Welcome there, <span className="text-main capitalize">{user.userName}</span>!</h1>
+                    <h1 className="text-light pb-6 text-3xl">Welcome there, <span className="text-main capitalize">{user.username}</span>!</h1>
                     <p className="text-light-Shade">{qoutes[0]}</p>
                 </>
             }

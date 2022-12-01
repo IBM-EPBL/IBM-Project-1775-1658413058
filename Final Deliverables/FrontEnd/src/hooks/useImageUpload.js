@@ -1,16 +1,18 @@
 import axios from 'axios';
 import {useState} from 'react';
+import { useAuthContext } from './useAuthContext';
 
 export const useImageUpload = () => {
     const [fruitName, setName] = useState("");
+    const { user } = useAuthContext();
 
   const uploadImg = async (img) => {
     const body = new FormData();
     body.append("image", img);
     
-    await axios.post('http://159.122.174.40:30085/api/fruit-classifier/',body,{
+    await axios.post('http://192.168.217.33:8000/api/fruit-classifier/',body,{
         headers: {
-            Authorization: "Token 90c74bb419419b6d79a56b1534fe084564e9d0a7"
+            Authorization: `Token ${user.token}`
         }
     })
         .then((res) => {
@@ -30,5 +32,7 @@ export const useImageUpload = () => {
         })
   };
 
-  return {uploadImg, fruitName, setName};
+  const rmName = () => {setName("")}
+
+  return {uploadImg, fruitName, rmName};
 }
