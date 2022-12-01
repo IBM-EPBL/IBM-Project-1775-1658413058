@@ -1,0 +1,3 @@
+Please download and place the downloads folder in the same directory of this file
+
+Link for download can be founded in the README.md file in the Sprint 2 folder
